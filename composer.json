@@ -1,0 +1,19 @@
+{
+    "name": "intelindev/p5gallery-patients",
+    "description": "Before and after patiens gallery",
+    "license": "GLP",
+    "autoload": {
+        "psr-4": {
+            "Intelindev\\P5galleryPatients\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Y"
+        }
+    ],
+    "require": {},
+    "autoload":{
+        "psr-4":{"Inc\\" : "./inc"}
+    }
+}
