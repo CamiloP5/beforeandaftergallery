@@ -12,8 +12,8 @@
 
     <form action="options.php" method="post">
         <?php
-            settings_fields(''); // 'option_group' from inc/Pages/Admin.php function p5SetSettings()
-            do_settings_sections( '' ); // 'page' from inc/Pages/Admin.php function p5SetSections()
+            settings_fields(''); // 'option_group' from inc/Pages/SettingsStyles.php function p5SetSettings()
+            do_settings_sections( '' ); // 'page' from inc/Pages/SettingsStyles.php function p5SetSections()
             //submit_button();
         ?>
         

@@ -11,18 +11,23 @@ namespace Inc\Pages;
 use \Inc\Api\P5SettingsApi;
 use \Inc\Base\P5Basecontroller;
 use \Inc\Api\Callbacks\P5AdminCallbacks;
-
+use \Inc\Api\Callbacks\P5AdminFields;
 
 class Admin extends P5Basecontroller
 {
     public $settings;
     public $callbacks;
+    public $admin;
+    public $procedures;
+
     public $pages = array();
     public $subpages = array();
 
     public function register()
     {
         $this->callbacks = new P5AdminCallbacks();
+
+        $this->admin = new P5AdminFields();
 
         $this->settings = new P5SettingsApi();
 
@@ -69,34 +74,60 @@ class Admin extends P5Basecontroller
             ),
             array(
                 'parent_slug'   => 'patients_gallery',
-                'page_title'    => 'Procedures Categories',
-                'menu_title'    => 'Procedures Categories',
-                'capability'    => 'manage_options',
-                'menu_slug'     => 'p5_gallery_procedures',
-                'callback'      => array($this->callbacks, 'p5AdminProceduresCategories'),
-            ),
-            array(
-                'parent_slug'   => 'patients_gallery',
                 'page_title'    => 'Default Procedures',
                 'menu_title'    => 'Default Procedures',
                 'capability'    => 'manage_options',
                 'menu_slug'     => 'p5_gallery_default_procedures',
                 'callback'      => array($this->callbacks, 'p5AdminDefaultProcedures'),
             ),
+            array(
+                'parent_slug'   => 'patients_gallery',
+                'page_title'    => 'Procedures Categories',
+                'menu_title'    => 'Procedures Categories',
+                'capability'    => 'manage_options',
+                'menu_slug'     => 'p5_gallery_procedures',
+                'callback'      => array($this->callbacks, 'p5AdminProceduresCategories'),
+            ),
+            
         );
     }
 
-    //Custom Fields 
+    //Settings admin 
 
     public function p5SetSettings()
     {
-        $args = array(
-            array(
-                'option_group'  => 'p5_option_group_settings_styles',
-                'option_name'   => 'sensitive_image',
-                'callback'      =>  array( $this->callbacks , 'p5OptionGroupSettingsStyles' ) 
-            )
-        );
+        
+        foreach ($this->checkbox_styles_fields as $key => $checkbox_field) {
+            $args[] = array(
+                'option_group'  => 'p5_option_group_settings_manager',
+                'option_name'   => $key,
+                'callback'      =>  array( $this->admin , 'p5SettingsCheckBoxSanitize' ) 
+            );
+        }
+
+        foreach ($this->input_image_styles_fields as $key => $input_sfield) {
+            $args[] = array(
+                'option_group'  => 'p5_option_group_settings_manager',
+                'option_name'   => $key,
+                'callback'      =>  array( $this->admin , 'p5SettingsInputSanitize' ) 
+            );
+        }
+
+        foreach ($this->input_styles_fields as $key => $input_sfield) {
+            $args[] = array(
+                'option_group'  => 'p5_option_group_settings_manager',
+                'option_name'   => $key,
+                'callback'      =>  array( $this->admin , 'p5SettingsInputSanitize' ) 
+            );
+        }
+        //Procedures
+        foreach ($this->face_procedures as $key => $checkbox_field) {
+            $args[] = array(
+                'option_group'  => 'p5_option_group_face_procedures',
+                'option_name'   => $key,
+                'callback'      =>  array( $this->procedures , 'p5ProceduresCheckBoxSanitize' ) 
+            );
+        }
 
         $this->settings->p5SetSettings($args);
     }
@@ -106,37 +137,149 @@ class Admin extends P5Basecontroller
         $args = array(
             array(
                 'id'        => 'p5_section_settings_styles',
-                'title'     => 'Settings Styles',
-                'callback'  => array($this->callbacks,'p5AdminSectionSettingsStyles'),
+                'title'     => 'Settings Manager',
+                'callback'  => array($this->admin,'p5AdminSectionSettingsStyles'),
                 'page'      => 'p5_gallery_settings' // 'menu_slug' from setPages or setSubPages
-            )
-        );
+            ),
+            //Procedures
+            array(
+                'id'        => 'p5_section_default_procedures',
+                'title'     => 'Face Procedures',
+                'callback'  => array($this->admin,'p5AdminSectionProcedures'),
+                'page'      => 'p5_gallery_default_procedures' // 'menu_slug' from setPages or setSubPages
+            ),
 
+        );
         $this->settings->p5SetSections($args);
     }
 
     public function p5SetFields()
     {
-        $args = array(
-            //settings styles fields
-            array(
-                'id'        => 'sensitive_image', // 'option_name' from setSettings
-                'title'     => 'Sensitive Image Protection',
-                'callback'  => array($this->callbacks, 'p5AdminFieldsSettingsStyles'),
+        $args = array();
+
+        foreach ($this->checkbox_styles_fields as $key => $checkbox_field) {
+            $args[] = array(
+                'id'        => $key, // 'option_name' from setSettings
+                'title'     => $checkbox_field,
+                'callback'  => array($this->admin, 'p5AdminSettingsCheckBox'),
                 'page'      => 'p5_gallery_settings', // 'menu_slug' from setPages or setSubPages
                 'section'   => 'p5_section_settings_styles', // 'id' from setSections
                 'args'      => array(
-                                    'label_for' => 'settings_styles', // 'id' from this field
-                                    'class'     => 'p5-input-class'
+                                    'label_for' => $key, // 'id' from this field
+                                    'class'     => 'ui-toggle'
                                 )
-            )
-            //settings styles fields
+            );
+        }
 
-        );
+        foreach ($this->input_image_styles_fields as $key => $input_image_field) {
+            $args[] = array(
+                'id'        => $key, // 'option_name' from setSettings
+                'title'     => $input_image_field,
+                'callback'  => array($this->admin, 'p5AdminSettingsInputLogo'),
+                'page'      => 'p5_gallery_settings', // 'menu_slug' from setPages or setSubPages
+                'section'   => 'p5_section_settings_styles', // 'id' from setSections
+                'args'      => array(
+                                    'label_for' => $key, // 'id' from this field
+                                    'class'     => 'p5-input'
+                                )
+            );
+        }
 
+        foreach ($this->input_styles_fields as $key => $input_field) {
+            $args[] = array(
+                'id'        => $key, // 'option_name' from setSettings
+                'title'     => $input_field,
+                'callback'  => array($this->admin, 'p5AdminSettingsInput'),
+                'page'      => 'p5_gallery_settings', // 'menu_slug' from setPages or setSubPages
+                'section'   => 'p5_section_settings_styles', // 'id' from setSections
+                'args'      => array(
+                                    'label_for' => $key, // 'id' from this field
+                                    'class'     => 'p5-input'
+                                )
+            );
+        }
+        //Procedures 
+        foreach ($this->face_procedures as $key => $checkbox_field) {
+            $args[] = array(
+                'id'        => $key, // 'option_name' from setSettings
+                'title'     => $checkbox_field,
+                'callback'  => array($this->admin, 'p5AdminSettingsCheckBox'),
+                'page'      => 'p5_gallery_default_procedures', // 'menu_slug' from setPages or setSubPages
+                'section'   => 'p5_section_default_procedures', // 'id' from setSections
+                'args'      => array(
+                                    'label_for' => $key, // 'id' from this field
+                                    'class'     => 'ui-toggle'
+                                )
+            );
+        }
+
+        foreach ($this->breast_procedures as $key => $checkbox_field) {
+            $args[] = array(
+                'id'        => $key, // 'option_name' from setSettings
+                'title'     => $checkbox_field,
+                'callback'  => array($this->admin, 'p5AdminSettingsCheckBox'),
+                'page'      => 'p5_gallery_default_procedures', // 'menu_slug' from setPages or setSubPages
+                'section'   => 'p5_section_default_procedures', // 'id' from setSections
+                'args'      => array(
+                                    'label_for' => $key, // 'id' from this field
+                                    'class'     => 'ui-toggle'
+                                )
+            );
+        }
+
+        foreach ($this->body_procedures as $key => $checkbox_field) {
+            $args[] = array(
+                'id'        => $key, // 'option_name' from setSettings
+                'title'     => $checkbox_field,
+                'callback'  => array($this->admin, 'p5AdminSettingsCheckBox'),
+                'page'      => 'p5_gallery_default_procedures', // 'menu_slug' from setPages or setSubPages
+                'section'   => 'p5_section_default_procedures', // 'id' from setSections
+                'args'      => array(
+                                    'label_for' => $key, // 'id' from this field
+                                    'class'     => 'ui-toggle'
+                                )
+            );
+        }
+
+        foreach ($this->skin_procedures as $key => $checkbox_field) {
+            $args[] = array(
+                'id'        => $key, // 'option_name' from setSettings
+                'title'     => $checkbox_field,
+                'callback'  => array($this->admin, 'p5AdminSettingsCheckBox'),
+                'page'      => 'p5_gallery_default_procedures', // 'menu_slug' from setPages or setSubPages
+                'section'   => 'p5_section_default_procedures', // 'id' from setSections
+                'args'      => array(
+                                    'label_for' => $key, // 'id' from this field
+                                    'class'     => 'ui-toggle'
+                                )
+            );
+        }
+        foreach ($this->female_procedures as $key => $checkbox_field) {
+            $args[] = array(
+                'id'        => $key, // 'option_name' from setSettings
+                'title'     => $checkbox_field,
+                'callback'  => array($this->admin, 'p5AdminSettingsCheckBox'),
+                'page'      => 'p5_gallery_default_procedures', // 'menu_slug' from setPages or setSubPages
+                'section'   => 'p5_section_default_procedures', // 'id' from setSections
+                'args'      => array(
+                                    'label_for' => $key, // 'id' from this field
+                                    'class'     => 'ui-toggle'
+                                )
+            );
+        }
+        foreach ($this->male_procedures as $key => $checkbox_field) {
+            $args[] = array(
+                'id'        => $key, // 'option_name' from setSettings
+                'title'     => $checkbox_field,
+                'callback'  => array($this->admin, 'p5AdminSettingsCheckBox'),
+                'page'      => 'p5_gallery_default_procedures', // 'menu_slug' from setPages or setSubPages
+                'section'   => 'p5_section_default_procedures', // 'id' from setSections
+                'args'      => array(
+                                    'label_for' => $key, // 'id' from this field
+                                    'class'     => 'ui-toggle'
+                                )
+            );
+        }
         $this->settings->p5SetFields($args);
     }
-
-
 }
-

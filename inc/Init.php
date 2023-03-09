@@ -11,7 +11,7 @@ namespace Inc;
 
 use Inc\Base\P5Activate;
 use Inc\Base\P5Deactivate;
-use Inc\Pages\Admin;
+use Inc\Pages\SettingsStyles;
 
 final class Init
 {
