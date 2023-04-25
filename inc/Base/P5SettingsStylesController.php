@@ -1,65 +1,44 @@
 <?php
 /**
- * @package  p5galleryPatients
+* @package  p5galleryPatients
  * ===========================
- * Admin page plugin
+ * Base Controller Plugin
  * ===========================
 */
-
-namespace Inc\Pages;
+namespace Inc\Base;
 
 use \Inc\Api\P5SettingsApi;
 use \Inc\Base\P5Basecontroller;
-use \Inc\Api\Callbacks\P5AdminCallbacks;
 use \Inc\Api\Callbacks\P5AdminSettingsStyles;
+use \Inc\Api\Callbacks\P5AdminCallbacks;
 
-class Admin extends P5Basecontroller
+
+class P5SettingsStylesController extends P5Basecontroller
 {
-    public $settings;
     public $callbacks;
-    public $admin;
-    public $procedures;
-
-    public $pages = array();
-    //public $subpages = array();
+    public $styles; 
+    public $subpages = array();
 
     public function register()
     {
-        $this->callbacks = new P5AdminCallbacks();
-
-        $this->admin = new P5AdminSettingsStyles();
-
         $this->settings = new P5SettingsApi();
 
-        $this->p5SetPages();
+        $this->callbacks = new P5AdminCallbacks();
 
-       // $this->p5SetSubPages();
+        $this->styles = new P5AdminSettingsStyles();
 
-       // $this->p5SetSettings();
+        $this->p5SetSubPages();
 
-       // $this->p5SetSections();
+        $this->p5SetSettings();
 
-       // $this->p5SetFields();
+        $this->p5SetSections();
 
-        $this->settings->p5addPages( $this->pages )->p5widthSubPage('Dashboard')->register();
+        $this->p5SetFields();
+
+        $this->settings->p5addSubPages( $this->subpages )->register();
     }
 
-    public function p5SetPages()
-    {
-        $this->pages = array(
-            array(
-                'page_title'    => 'Dashboard',
-                'menu_title'    => 'Dashboard',
-                'capability'    => 'manage_options',
-                'menu_slug'     => 'patients_gallery',
-                'callback'      => array($this->callbacks, 'p5AdminDashboard'),
-                'icon_url'      => 'dashicons-universal-access',
-                'position'      => 110
-            ),
-        ); 
-    }
-
-    /*public function p5SetSubPages()
+    public function p5SetSubPages()
     {
         $this->subpages = array(
             array(
@@ -69,37 +48,18 @@ class Admin extends P5Basecontroller
                 'capability'    => 'manage_options',
                 'menu_slug'     => 'p5_gallery_settings',
                 'callback'      => array($this->callbacks, 'p5AdminSettingsStyles'),
-            ),
-            array(
-                'parent_slug'   => 'patients_gallery',
-                'page_title'    => 'Default Procedures',
-                'menu_title'    => 'Default Procedures',
-                'capability'    => 'manage_options',
-                'menu_slug'     => 'p5_gallery_default_procedures',
-                'callback'      => array($this->callbacks, 'p5AdminDefaultProcedures'),
-            ),
-            array(
-                'parent_slug'   => 'patients_gallery',
-                'page_title'    => 'Procedures Categories',
-                'menu_title'    => 'Procedures Categories',
-                'capability'    => 'manage_options',
-                'menu_slug'     => 'p5_gallery_procedures',
-                'callback'      => array($this->callbacks, 'p5AdminProceduresCategories'),
-            ),
+            )
             
         );
-    }*/
+    }
 
-    //Settings admin 
-
-    /*public function p5SetSettings()
+    public function p5SetSettings()
     {
-        
         foreach ($this->checkbox_styles_fields as $key => $checkbox_field) {
             $args[] = array(
                 'option_group'  => 'p5_option_group_settings_manager',
                 'option_name'   => $key,
-                'callback'      =>  array( $this->admin , 'p5SettingsCheckBoxSanitize' ) 
+                'callback'      =>  array( $this->styles , 'p5SettingsCheckBoxSanitize' ) 
             );
         }
 
@@ -107,7 +67,7 @@ class Admin extends P5Basecontroller
             $args[] = array(
                 'option_group'  => 'p5_option_group_settings_manager',
                 'option_name'   => $key,
-                'callback'      =>  array( $this->admin , 'p5InputSanitize' ) 
+                'callback'      =>  array( $this->styles , 'p5InputSanitize' ) 
             );
         }
 
@@ -115,35 +75,35 @@ class Admin extends P5Basecontroller
             $args[] = array(
                 'option_group'  => 'p5_option_group_settings_manager',
                 'option_name'   => $key,
-                'callback'      =>  array( $this->admin , 'p5InputSanitize' ) 
+                'callback'      =>  array( $this->styles , 'p5InputSanitize' ) 
             );
         }
 
         $this->settings->p5SetSettings($args);
-    }*/
+    }
 
-   /* public function p5SetSections()
+    public function p5SetSections()
     {
         $args = array(
+            //Procedures
             array(
                 'id'        => 'p5_section_settings_styles',
                 'title'     => 'Settings Manager',
-                'callback'  => array($this->admin,'p5AdminSectionSettingsStyles'),
+                'callback'  => array($this->styles,'p5AdminSectionSettingsStyles'),
                 'page'      => 'p5_gallery_settings' // 'menu_slug' from setPages or setSubPages
             )
         );
         $this->settings->p5SetSections($args);
-    }*/
+    }
 
-   /* public function p5SetFields()
+    public function p5SetFields()
     {
         $args = array();
-
         foreach ($this->checkbox_styles_fields as $key => $checkbox_field) {
             $args[] = array(
                 'id'        => $key, // 'option_name' from setSettings
                 'title'     => $checkbox_field,
-                'callback'  => array($this->admin, 'p5GenerateCheckBox'),
+                'callback'  => array($this->styles, 'p5GenerateCheckBox'),
                 'page'      => 'p5_gallery_settings', // 'menu_slug' from setPages or setSubPages
                 'section'   => 'p5_section_settings_styles', // 'id' from setSections
                 'args'      => array(
@@ -157,7 +117,7 @@ class Admin extends P5Basecontroller
             $args[] = array(
                 'id'        => $key, // 'option_name' from setSettings
                 'title'     => $input_image_field,
-                'callback'  => array($this->admin, 'p5AdminSettingsInputLogo'),
+                'callback'  => array($this->styles, 'p5AdminSettingsInputLogo'),
                 'page'      => 'p5_gallery_settings', // 'menu_slug' from setPages or setSubPages
                 'section'   => 'p5_section_settings_styles', // 'id' from setSections
                 'args'      => array(
@@ -171,7 +131,7 @@ class Admin extends P5Basecontroller
             $args[] = array(
                 'id'        => $key, // 'option_name' from setSettings
                 'title'     => $input_field,
-                'callback'  => array($this->admin, 'p5AdminSettingsInput'),
+                'callback'  => array($this->styles, 'p5AdminSettingsInput'),
                 'page'      => 'p5_gallery_settings', // 'menu_slug' from setPages or setSubPages
                 'section'   => 'p5_section_settings_styles', // 'id' from setSections
                 'args'      => array(
@@ -180,6 +140,7 @@ class Admin extends P5Basecontroller
                                 )
             );
         }
+        
         $this->settings->p5SetFields($args);
-    }*/
+    }
 }

@@ -21,6 +21,9 @@ final class Init
         return[
             Pages\Admin::class,
             Base\P5Enqueue::class,
+            Base\P5CustomPostTypeController::class,
+            Base\P5DefaultProceduresController::class,
+            Base\P5SettingsStylesController::class,
             Base\P5SettingsLinks::class
         ];
     }

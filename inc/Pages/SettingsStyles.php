@@ -8,91 +8,37 @@
 
 namespace Inc\Pages;
 
+use \Inc\Pages\AdminPages;
 use \Inc\Api\P5SettingsApi;
 use \Inc\Base\P5Basecontroller;
 use \Inc\Api\Callbacks\P5AdminCallbacks;
-use \Inc\Api\Callbacks\P5AdminSettingsStyles;
+use \Inc\Api\Callbacks\P5AdminFields;
 
-class Admin extends P5Basecontroller
+class SettingsStyles extends P5Basecontroller
 {
     public $settings;
     public $callbacks;
-    public $admin;
-    public $procedures;
-
-    public $pages = array();
-    //public $subpages = array();
+    public $admin_pages;
+    public $admin_fields; 
 
     public function register()
     {
         $this->callbacks = new P5AdminCallbacks();
 
-        $this->admin = new P5AdminSettingsStyles();
+        $this->admin_fields = new P5AdminFields();
+
+        $this->admin_pages = new P5AdminPages();
 
         $this->settings = new P5SettingsApi();
 
-        $this->p5SetPages();
+        $this->p5SetSettingsStyles();
 
-       // $this->p5SetSubPages();
+        $this->p5SetSectionsStyles();
 
-       // $this->p5SetSettings();
-
-       // $this->p5SetSections();
-
-       // $this->p5SetFields();
-
-        $this->settings->p5addPages( $this->pages )->p5widthSubPage('Dashboard')->register();
+        $this->p5SetFieldsStyles();
     }
 
-    public function p5SetPages()
-    {
-        $this->pages = array(
-            array(
-                'page_title'    => 'Dashboard',
-                'menu_title'    => 'Dashboard',
-                'capability'    => 'manage_options',
-                'menu_slug'     => 'patients_gallery',
-                'callback'      => array($this->callbacks, 'p5AdminDashboard'),
-                'icon_url'      => 'dashicons-universal-access',
-                'position'      => 110
-            ),
-        ); 
-    }
-
-    /*public function p5SetSubPages()
-    {
-        $this->subpages = array(
-            array(
-                'parent_slug'   => 'patients_gallery',
-                'page_title'    => 'Gallery Settings',
-                'menu_title'    => 'Gallery Settings',
-                'capability'    => 'manage_options',
-                'menu_slug'     => 'p5_gallery_settings',
-                'callback'      => array($this->callbacks, 'p5AdminSettingsStyles'),
-            ),
-            array(
-                'parent_slug'   => 'patients_gallery',
-                'page_title'    => 'Default Procedures',
-                'menu_title'    => 'Default Procedures',
-                'capability'    => 'manage_options',
-                'menu_slug'     => 'p5_gallery_default_procedures',
-                'callback'      => array($this->callbacks, 'p5AdminDefaultProcedures'),
-            ),
-            array(
-                'parent_slug'   => 'patients_gallery',
-                'page_title'    => 'Procedures Categories',
-                'menu_title'    => 'Procedures Categories',
-                'capability'    => 'manage_options',
-                'menu_slug'     => 'p5_gallery_procedures',
-                'callback'      => array($this->callbacks, 'p5AdminProceduresCategories'),
-            ),
-            
-        );
-    }*/
-
-    //Settings admin 
-
-    /*public function p5SetSettings()
+    public function p5SetSettingsStyles()
     {
         
         foreach ($this->checkbox_styles_fields as $key => $checkbox_field) {
@@ -118,11 +64,10 @@ class Admin extends P5Basecontroller
                 'callback'      =>  array( $this->admin , 'p5InputSanitize' ) 
             );
         }
-
         $this->settings->p5SetSettings($args);
-    }*/
+    }
 
-   /* public function p5SetSections()
+    public function p5SetSectionsStyles()
     {
         $args = array(
             array(
@@ -133,9 +78,9 @@ class Admin extends P5Basecontroller
             )
         );
         $this->settings->p5SetSections($args);
-    }*/
+    }
 
-   /* public function p5SetFields()
+    public function p5SetFieldsStyles()
     {
         $args = array();
 
@@ -181,5 +126,6 @@ class Admin extends P5Basecontroller
             );
         }
         $this->settings->p5SetFields($args);
-    }*/
+    }
+
 }

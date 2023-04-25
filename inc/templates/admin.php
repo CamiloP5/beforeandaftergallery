@@ -7,7 +7,7 @@
 */
 ?>
 <div class="wrap">
-    <h1> Admin Dashboard </h1>    
+    <h1> Admin Dashboard</h1>    
     <?php settings_errors(); ?>
 
     <form action="options.php" method="post">

@@ -20,6 +20,7 @@ class P5Enqueue  extends P5Basecontroller
     public function enqueue(){
         wp_enqueue_style('p5_gallery_css', $this->plugin_url.'assets/css/P5AdminStyles.css', 1.0);
         wp_enqueue_style('color_picker_css', $this->plugin_url.'assets/color-picker/css/wheelcolorpicker.min.css', 1.0);
+        wp_enqueue_media();
         wp_enqueue_script('p5_gallery_js', $this->plugin_url.'assets/js/P5Scripts.js', 1.0);
         wp_enqueue_script('color_picker_js', $this->plugin_url.'assets/color-picker/jquery.wheelcolorpicker.min.js', 1.0);
     }

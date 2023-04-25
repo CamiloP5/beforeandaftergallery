@@ -22,7 +22,9 @@ class P5Basecontroller
 	public $body_procedures;
 	public $skin_procedures;
 	public $male_procedures;
-	public $female_procedures; 
+	public $female_procedures;
+
+	public $new_patients;
 
 	public function __construct(){
 
@@ -36,6 +38,7 @@ class P5Basecontroller
 		);
 
 		$this->input_styles_fields = array(
+			'gallery_slug' 						=> 'Page Gallery Slug',
 			'contact_slug' 						=> 'Page Contact Slug',
 			'procedure_title_color' 			=> "Color to Procedures Title's ",
 			'title_color' 						=> "Gallery Title's Color",
@@ -51,6 +54,8 @@ class P5Basecontroller
 			'logo_url' 							=> 'Logo Url'
 		);
 
+		//Procedures
+		
 		$this->face_procedures = array(
 			'blepharoplasty'	=>	'Blepharoplasty'	,
 			'facelift'	=>	'Facelift'	,
@@ -108,7 +113,25 @@ class P5Basecontroller
 			'male_thigh_lift'	=>	'Male Thigh Lift'	,
 			'injectables_for_men'	=>	'Injectables For Men'
 		);
+		
+		//Add metaboxes
 
+		$this->new_patients = array(
+			'gcase_details' => 'Case Details',
+			'gcase_notes' => 'Case Notes',
+			'surgeon' => 'Surgeon',
+			'hide_from_live'=> 'Hide From Live',
+			'gheight'=> 'Height',
+			'gweight' => 'Weight',
+			'age' => 'Age',
+			'implant_size_left' => 'Implant Size Left',
+			'implant_size_right' => 'Implant Size Right',
+			'cup_size_before' => 'Cup Size Before',
+			'cup_size_after' => 'Cup Sizen After',
+			'images_array' => 'Images'
+		);
+
+		
 		
 	}
 	

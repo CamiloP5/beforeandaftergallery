@@ -94,3 +94,13 @@ div.ui-toggle label>div:hover{
     cursor:pointer;
 }
 
+/*Settings*/
+.logo_container {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+} 
+img.gallery_image_logo {
+    max-width: 200px;
+    margin-left: 10px;
+}
